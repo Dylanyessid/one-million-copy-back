@@ -2,7 +2,8 @@ import AppDataSource from '../../config/database/database';
 
 import { Result, ok, err } from '../../core/utils/result';
 import { generateUuidV7 } from '../../core/utils/uuid';
-import { Lead } from '../../models/Lead';
+import { Lead, FuenteLead } from '../../models/Lead';
+import { LessThan, MoreThanOrEqual, ILike } from 'typeorm';
 
 export interface CreateLeadData {
   id: string;
@@ -73,5 +74,64 @@ export const leadService = {
       productoInteres: lead.productoInteres,
       presupuesto: lead.presupuesto,
     });
+  },
+
+  async findAll(params: {
+    cursor?: string;
+    limit: number;
+    fuente?: string;
+    fechaDesde?: string;
+    fechaHasta?: string;
+  }): Promise<Result<{ leads: Lead[]; nextCursor: string | null }, string>> {
+    const leadRepository = AppDataSource.getRepository(Lead);
+
+    const queryBuilder = leadRepository.createQueryBuilder('lead')
+      .orderBy('lead.createdAt', 'DESC')
+      .addOrderBy('lead.id', 'DESC')
+      .take(params.limit);
+
+    if (params.cursor) {
+      const cursorLead = await leadRepository.findOne({ where: { id: params.cursor } });
+      if (cursorLead) {
+        queryBuilder.where(
+          '(lead.id < :cursorId)',
+          {
+            cursorCreatedAt: cursorLead.createdAt,
+            cursorId: cursorLead.id,
+          }
+        );
+      }
+    }
+
+    if (params.fuente) {
+      const fuenteLower = params.fuente.toLowerCase();
+      const fuenteValues = Object.values(FuenteLead).map(v => v.toLowerCase());
+      const fuenteMatch = fuenteValues.find(v => v === fuenteLower);
+      if (fuenteMatch) {
+        queryBuilder.andWhere('LOWER(lead.fuente) = :fuente', { fuente: fuenteLower });
+      }
+    }
+
+    if (params.fechaDesde) {
+      queryBuilder.andWhere('lead.createdAt >= :fechaDesde', { 
+        fechaDesde: new Date(params.fechaDesde) 
+      });
+    }
+
+    if (params.fechaHasta) {
+      queryBuilder.andWhere('lead.createdAt <= :fechaHasta', { 
+        fechaHasta: new Date(params.fechaHasta) 
+      });
+    }
+
+    const leads = await queryBuilder.getMany();
+
+    let nextCursor: string | null = null;
+    if (leads.length) {
+      const lastLead = leads[leads.length - 1];
+      nextCursor = lastLead.id;
+    }
+
+    return ok({ leads, nextCursor });
   },
 };

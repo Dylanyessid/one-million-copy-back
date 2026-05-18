@@ -16,6 +16,7 @@ export enum ErrorCodes {
 export enum SuccessCodes {
   LOGIN_SUCCESS = 'LOGIN_SUCCESS',
   LEAD_CREATED = 'LEAD_CREATED',
+  LEADS_FETCHED = 'LEADS_FETCHED',
 }
 
 
@@ -34,6 +35,7 @@ export const errorMessages: Record<string, { message: string; httpCode: number }
 export const successMessages: Record<string, { message: string; httpCode: number }> = {
   [SuccessCodes.LOGIN_SUCCESS]: { message: 'Login exitoso', httpCode: 200 },
   [SuccessCodes.LEAD_CREATED]: { message: 'Lead creado exitosamente', httpCode: 201 },
+  [SuccessCodes.LEADS_FETCHED]: { message: 'Leads obtenidos exitosamente', httpCode: 200 },
 } as const;
 
 export type ErrorCode = keyof typeof errorMessages;
