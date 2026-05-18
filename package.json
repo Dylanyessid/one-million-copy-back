@@ -1,0 +1,25 @@
+{
+  "name": "one-million-copy-back",
+  "version": "1.0.0",
+  "description": "Backend app with TypeScript, TypeORM and PostgreSQL",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "typeorm": "^0.3.20",
+    "pg": "^8.11.3",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "reflect-metadata": "^0.1.14"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "typescript": "^5.3.2",
+    "ts-node": "^10.9.2"
+  }
+}
