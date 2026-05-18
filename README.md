@@ -137,3 +137,16 @@ Códigos de error comunes:
 - `INTERNAL_ERROR`: Error inesperado
 
 Los servicios capturan excepciones y retornan `INTERNAL_ERROR`
+
+## DEPLOY
+
+Se usó Render como servicio de Deploy (tuve que poner rejectUnauthorized:false para agilizar el despliegue y conexion con bd de prod).
+
+Enlace base: https://one-million-copy-back.onrender.com/
+
+Email y password para pruebas en este entorno (recuerda hacer login): 
+
+admin@mail.com
+Admin123+*
+
+NOTA: Por el plan gratuito de Render, a veces se pone lenta las peticiones, es normal, ya que es una restricción del proveedor para uso gratuito

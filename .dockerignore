@@ -1,0 +1,8 @@
+node_modules
+*.ts
+.git
+.env
+.env.example
+dist
+README.md
+*.md
