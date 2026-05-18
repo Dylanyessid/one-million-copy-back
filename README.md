@@ -11,6 +11,7 @@ API REST para gestión de leads con análisis de datos e IA.
 - **OpenAI (GPT-4)**: Recomendaciones basadas en IA
 - **Luxon**: Manejo de fechas en UTC más cómoda
 - **class-validator**: Validación de DTOs de los endpoints
+- **UUID**: Estándar para IDs de recursos en DB. Se usó la V7 ya que permite organizar por tiempo los recursos y es óptimo a la hora de buscar, por ejemplo, en paginación.
 
 ## Arquitectura
 
@@ -60,6 +61,16 @@ BCRYPT_ROUNDS=10
 
 OPENAI_API_KEY=sk-...
 ```
+
+## Ejecutar SEED
+
+Para tener un usuario para usar los endpoints, ya que tienen autenticación por JWT, y tener unos leads de ejemplo se debe ejecutar el comando:
+
+```bash
+npm run seed
+```
+
+NOTA: Hacer esto después de haber definido las variables de entorno y tener la conexión a la DB
 
 ## Endpoints
 
