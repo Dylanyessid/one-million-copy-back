@@ -5,6 +5,9 @@ dotenv.config();
 export const envs = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
+  jwt: {
+    secret: process.env.JWT_SECRET || 'your-secret-key',
+  },
   bcrypt:{
     rounds: parseInt(process.env.BCRYPT_ROUNDS || '10', 10),
   },

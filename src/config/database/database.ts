@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
 import { envs } from '../envs';
+import { Usuario } from '../../models/Usuario';
+
 
  const AppDataSource = new DataSource({
   type: 'postgres',
@@ -9,7 +11,7 @@ import { envs } from '../envs';
   password: envs.db.password,
   database: envs.db.database,
   logging: envs.nodeEnv !== 'production',
-  entities: [],
+  entities: [Usuario],
 
 });
 
