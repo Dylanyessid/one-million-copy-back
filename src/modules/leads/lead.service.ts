@@ -86,6 +86,7 @@ export const leadService = {
     const leadRepository = AppDataSource.getRepository(Lead);
 
     const queryBuilder = leadRepository.createQueryBuilder('lead')
+      .where('lead.deletedAt IS NULL')
       .orderBy('lead.createdAt', 'DESC')
       .addOrderBy('lead.id', 'DESC')
       .take(params.limit);
@@ -93,7 +94,7 @@ export const leadService = {
     if (params.cursor) {
       const cursorLead = await leadRepository.findOne({ where: { id: params.cursor } });
       if (cursorLead) {
-        queryBuilder.where(
+        queryBuilder.andWhere(
           '(lead.id < :cursorId)',
           {
             cursorCreatedAt: cursorLead.createdAt,
@@ -165,6 +166,19 @@ export const leadService = {
     if (data.presupuesto !== undefined) lead.presupuesto = data.presupuesto;
 
     await leadRepository.save(lead);
+
+    return ok(lead);
+  },
+
+  async deleteLead(id: string): Promise<Result<Lead, string>> {
+    const leadRepository = AppDataSource.getRepository(Lead);
+
+    const lead = await leadRepository.findOne({ where: { id },  });
+    if (!lead) {
+      return err('LEAD_NOT_FOUND');
+    }
+
+    await leadRepository.softDelete(id);
 
     return ok(lead);
   },

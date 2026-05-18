@@ -87,3 +87,25 @@ export const updateLead = async (req: Request, res: Response) => {
     data: { lead: result.value },
   });
 };
+
+export const deleteLead = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const result = await leadService.deleteLead(id);
+
+  if (!result.ok) {
+    const errorData = getErrorMessageResponse(result.error);
+    return res.status(errorData.httpCode).json({
+      messageCode: result.error,
+      message: errorData.message,
+      httpCode: errorData.httpCode,
+    });
+  }
+
+  const successResponseData = getSuccessMessageResponse(SuccessCodes.LEAD_DELETED);
+  return res.status(successResponseData.httpCode).json({
+    messageCode: successResponseData.messageCode,
+    message: successResponseData.message,
+    httpCode: successResponseData.httpCode,
+  });
+};

@@ -19,6 +19,7 @@ export enum SuccessCodes {
   LEAD_CREATED = 'LEAD_CREATED',
   LEADS_FETCHED = 'LEADS_FETCHED',
   LEAD_UPDATED = 'LEAD_UPDATED',
+  LEAD_DELETED = 'LEAD_DELETED',
 }
 
 
@@ -40,6 +41,7 @@ export const successMessages: Record<string, { message: string; httpCode: number
   [SuccessCodes.LEAD_CREATED]: { message: 'Lead creado exitosamente', httpCode: 201 },
   [SuccessCodes.LEADS_FETCHED]: { message: 'Leads obtenidos exitosamente', httpCode: 200 },
   [SuccessCodes.LEAD_UPDATED]: { message: 'Lead actualizado exitosamente', httpCode: 200 },
+  [SuccessCodes.LEAD_DELETED]: { message: 'Lead eliminado exitosamente', httpCode: 200 },
 } as const;
 
 export type ErrorCode = keyof typeof errorMessages;

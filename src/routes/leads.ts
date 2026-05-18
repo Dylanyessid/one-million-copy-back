@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createLead, getLeads, updateLead } from "../modules/leads/leads.controller";
+import { createLead, getLeads, updateLead, deleteLead } from "../modules/leads/leads.controller";
 import { validationMiddleware } from "../core/middlewares/validation.middleware";
 import { CreateLeadDto } from "../modules/leads/dto/create.dto";
 import { GetLeadsDto } from "../modules/leads/dto/get-leads.dto";
@@ -12,6 +12,8 @@ router.get('/', validationMiddleware(GetLeadsDto, 'query'), getLeads);
 router.post('/', validationMiddleware(CreateLeadDto), createLead);
 
 router.patch('/:id', validationMiddleware(UpdateLeadDto), updateLead);
+
+router.delete('/:id', deleteLead);
 
 
 export default router;
