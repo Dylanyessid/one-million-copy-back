@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { createLead, getLeads, getLeadById, getLeadStats, getRecommendations, updateLead, deleteLead } from "../modules/leads/leads.controller";
 import { validationMiddleware } from "../core/middlewares/validation.middleware";
+import { authMiddleware } from "../core/middlewares/auth.middleware";
 import { CreateLeadDto } from "../modules/leads/dto/create.dto";
 import { GetLeadsDto } from "../modules/leads/dto/get-leads.dto";
 import { UpdateLeadDto } from "../modules/leads/dto/update-lead.dto";
 import { GetRecommendationsDto } from "../modules/leads/dto/get-recommendations.dto";
 
 const router = Router();
+
+router.use(authMiddleware);
 
 router.get('/stats', getLeadStats);
 
