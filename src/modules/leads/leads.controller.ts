@@ -132,3 +132,24 @@ export const getLeadById = async (req: Request, res: Response) => {
     data: { lead: result.value },
   });
 };
+
+export const getLeadStats = async (req: Request, res: Response) => {
+  const result = await leadService.getStats();
+
+  if (!result.ok) {
+    const errorData = getErrorMessageResponse(result.error);
+    return res.status(errorData.httpCode).json({
+      messageCode: result.error,
+      message: errorData.message,
+      httpCode: errorData.httpCode,
+    });
+  }
+
+  const successResponseData = getSuccessMessageResponse(SuccessCodes.LEAD_STATS_FETCHED);
+  return res.status(successResponseData.httpCode).json({
+    messageCode: successResponseData.messageCode,
+    message: successResponseData.message,
+    httpCode: successResponseData.httpCode,
+    data: result.value,
+  });
+};

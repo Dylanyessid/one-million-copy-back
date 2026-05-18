@@ -1,4 +1,5 @@
 import AppDataSource from '../../config/database/database';
+import { DateTime } from 'luxon';
 
 import { Result, ok, err } from '../../core/utils/result';
 import { generateUuidV7 } from '../../core/utils/uuid';
@@ -192,5 +193,56 @@ async deleteLead(id: string): Promise<Result<Lead, string>> {
     }
 
     return ok(lead);
+  },
+
+  async getStats(): Promise<Result<{
+    total: number;
+    porFuente: Record<string, number>;
+    promedioPresupuesto: number | null;
+    ultimos7Dias: number;
+  }, string>> {
+    const leadRepository = AppDataSource.getRepository(Lead);
+
+    const sevenDaysAgo = DateTime.utc().minus({ days: 7 }).toJSDate();
+
+    const totalResult = await leadRepository
+      .createQueryBuilder('lead')
+      .where('lead.deletedAt IS NULL')
+      .select('COUNT(*)', 'total')
+      .getRawOne();
+
+    const porFuenteResult = await leadRepository
+      .createQueryBuilder('lead')
+      .where('lead.deletedAt IS NULL')
+      .select('lead.fuente', 'fuente')
+      .addSelect('COUNT(*)', 'count')
+      .groupBy('lead.fuente')
+      .getRawMany();
+
+    const presupuestoResult = await leadRepository
+      .createQueryBuilder('lead')
+      .where('lead.deletedAt IS NULL')
+      .andWhere('lead.presupuesto IS NOT NULL')
+      .select('AVG(lead.presupuesto)', 'promedio')
+      .getRawOne();
+
+    const ultimos7DiasResult = await leadRepository
+      .createQueryBuilder('lead')
+      .where('lead.deletedAt IS NULL')
+      .andWhere('lead.createdAt >= :sevenDaysAgo', { sevenDaysAgo })
+      .select('COUNT(*)', 'total')
+      .getRawOne();
+
+    const porFuente: Record<string, number> = {};
+    porFuenteResult.forEach((item) => {
+      porFuente[item.fuente] = parseInt(item.count);
+    });
+
+    return ok({
+      total: parseInt(totalResult.total, 10),
+      porFuente,
+      promedioPresupuesto: presupuestoResult.promedio ? parseFloat(parseFloat(presupuestoResult.promedio).toFixed(2)) : null,
+      ultimos7Dias: parseInt(ultimos7DiasResult.total),
+    });
   },
 };
