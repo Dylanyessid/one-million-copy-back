@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { ErrorCodes, getErrorMessageResponse } from '../utils/api-messages';
+import { apiResponse } from '../utils/api-response';
 
 export const validationMiddleware = (
   dtoClass: new () => unknown,
@@ -14,7 +16,13 @@ export const validationMiddleware = (
       const messages = errors.map((err) => {
         return Object.values(err.constraints || {}).join(', ');
       });
-      res.status(400).json({ message: messages.join('; ') });
+      const errorData = getErrorMessageResponse(ErrorCodes.INVALID_PAYLOAD);
+      const payload = {
+            messageCode: ErrorCodes.INVALID_PAYLOAD,
+            message: messages.join('; '),
+            httpCode: errorData.httpCode
+          }
+      res.status(errorData.httpCode).json(payload);
       return;
     }
 
