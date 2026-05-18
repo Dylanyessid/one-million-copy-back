@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { leadService } from './lead.service';
 import { CreateLeadDto } from './dto/create.dto';
 import { GetLeadsDto } from './dto/get-leads.dto';
+import { UpdateLeadDto } from './dto/update-lead.dto';
 import { apiResponse } from '../../core/utils/api-response';
 import { getErrorMessageResponse, getSuccessMessageResponse, SuccessCodes } from '../../core/utils/api-messages';
 
@@ -60,5 +61,29 @@ export const getLeads = async (req: Request, res: Response) => {
       leads: result.value.leads,
       nextCursor: result.value.nextCursor,
     },
+  });
+};
+
+export const updateLead = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const data: UpdateLeadDto = req.body;
+
+  const result = await leadService.updateLead(id, data);
+
+  if (!result.ok) {
+    const errorData = getErrorMessageResponse(result.error);
+    return res.status(errorData.httpCode).json({
+      messageCode: result.error,
+      message: errorData.message,
+      httpCode: errorData.httpCode,
+    });
+  }
+
+  const successResponseData = getSuccessMessageResponse(SuccessCodes.LEAD_UPDATED);
+  return res.status(successResponseData.httpCode).json({
+    messageCode: successResponseData.messageCode,
+    message: successResponseData.message,
+    httpCode: successResponseData.httpCode,
+    data: { lead: result.value },
   });
 };

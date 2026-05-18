@@ -134,4 +134,38 @@ export const leadService = {
 
     return ok({ leads, nextCursor });
   },
+
+  async updateLead(id: string, data: {
+    nombre?: string;
+    email?: string;
+    telefono?: string;
+    fuente?: string;
+    productoInteres?: string;
+    presupuesto?: number;
+  }): Promise<Result<Lead, string>> {
+    const leadRepository = AppDataSource.getRepository(Lead);
+
+    const lead = await leadRepository.findOne({ where: { id } });
+    if (!lead) {
+      return err('LEAD_NOT_FOUND');
+    }
+
+    if (data.email !== undefined && data.email !== lead.email) {
+      const existingEmail = await leadRepository.findOne({ where: { email: data.email } });
+      if (existingEmail) {
+        return err('LEAD_EMAIL_EXISTS');
+      }
+    }
+
+    if (data.nombre !== undefined) lead.nombre = data.nombre;
+    if (data.email !== undefined) lead.email = data.email;
+    if (data.telefono !== undefined) lead.telefono = data.telefono || null;
+    if (data.fuente !== undefined) lead.fuente = data.fuente as any;
+    if (data.productoInteres !== undefined) lead.productoInteres = data.productoInteres || null;
+    if (data.presupuesto !== undefined) lead.presupuesto = data.presupuesto;
+
+    await leadRepository.save(lead);
+
+    return ok(lead);
+  },
 };
