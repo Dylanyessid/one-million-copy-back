@@ -1,4 +1,3 @@
-//Functions to hash and compare passwords using bcrypt
 import bcrypt from 'bcrypt';
 import { envs } from '../../config/envs';
 
