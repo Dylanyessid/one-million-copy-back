@@ -170,15 +170,26 @@ export const leadService = {
     return ok(lead);
   },
 
-  async deleteLead(id: string): Promise<Result<Lead, string>> {
+async deleteLead(id: string): Promise<Result<Lead, string>> {
     const leadRepository = AppDataSource.getRepository(Lead);
 
-    const lead = await leadRepository.findOne({ where: { id },  });
+    const lead = await leadRepository.findOne({ where: { id } });
     if (!lead) {
       return err('LEAD_NOT_FOUND');
     }
 
     await leadRepository.softDelete(id);
+
+    return ok(lead);
+  },
+
+  async findById(id: string): Promise<Result<Lead, string>> {
+    const leadRepository = AppDataSource.getRepository(Lead);
+
+    const lead = await leadRepository.findOne({ where: { id } });
+    if (!lead) {
+      return err('LEAD_NOT_FOUND');
+    }
 
     return ok(lead);
   },

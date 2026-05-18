@@ -109,3 +109,26 @@ export const deleteLead = async (req: Request, res: Response) => {
     httpCode: successResponseData.httpCode,
   });
 };
+
+export const getLeadById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const result = await leadService.findById(id);
+
+  if (!result.ok) {
+    const errorData = getErrorMessageResponse(result.error);
+    return res.status(errorData.httpCode).json({
+      messageCode: result.error,
+      message: errorData.message,
+      httpCode: errorData.httpCode,
+    });
+  }
+
+  const successResponseData = getSuccessMessageResponse(SuccessCodes.LEAD_FETCHED);
+  return res.status(successResponseData.httpCode).json({
+    messageCode: successResponseData.messageCode,
+    message: successResponseData.message,
+    httpCode: successResponseData.httpCode,
+    data: { lead: result.value },
+  });
+};
