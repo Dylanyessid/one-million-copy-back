@@ -10,21 +10,25 @@ export interface LoginData {
 
 export const authService = {
   async login(email: string, password: string): Promise<Result<LoginData, string>> {
-    const userRepository = AppDataSource.getRepository(Usuario);
-    const user = await userRepository.findOne({ where: { email } });
+    try {
+      const userRepository = AppDataSource.getRepository(Usuario);
+      const user = await userRepository.findOne({ where: { email } });
 
-    if (!user) {
-      return err('USER_NOT_FOUND');
+      if (!user) {
+        return err('USER_NOT_FOUND');
+      }
+
+      const isPasswordValid = await comparePassword(password, user.hash);
+
+      if (!isPasswordValid) {
+        return err('INVALID_CREDENTIALS');
+      }
+
+      const token = jwtService.sign({ id: user.id});
+
+      return ok({ token });
+    } catch (error) {
+      return err('INTERNAL_ERROR');
     }
-
-    const isPasswordValid = await comparePassword(password, user.hash);
-
-    if (!isPasswordValid) {
-      return err('INVALID_CREDENTIALS');
-    }
-
-    const token = jwtService.sign({ id: user.id});
-
-    return ok({ token });
   },
 };
