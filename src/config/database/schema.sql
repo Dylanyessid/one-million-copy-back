@@ -1,4 +1,12 @@
 
+CREATE TABLE usuarios (
+    id UUID PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    hash VARCHAR(255) NOT NULL, 
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TYPE fuente_lead AS ENUM ('instagram', 'facebook', 'landing_page', 'referido', 'otro');
 
 CREATE TABLE leads (

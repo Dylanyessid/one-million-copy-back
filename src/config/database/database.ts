@@ -9,7 +9,7 @@ import { envs } from '../envs';
   password: envs.db.password,
   database: envs.db.database,
   logging: envs.nodeEnv !== 'production',
-  entities: [__dirname + '/../entities/*.entity{.ts,.js}'],
+  entities: [],
 
 });
 
