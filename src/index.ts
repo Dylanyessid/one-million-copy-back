@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import express from 'express';
 import morgan from 'morgan';
-import { AppDataSource } from './config/database';
+import AppDataSource from './config/database/database';
+import { envs } from './config/envs';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = envs.port;
 
 app.use(express.json());
 app.use(morgan('dev'));
