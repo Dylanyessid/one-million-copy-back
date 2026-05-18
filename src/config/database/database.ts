@@ -13,7 +13,9 @@ import { Lead } from '../../models/Lead';
   database: envs.db.database,
   logging: envs.nodeEnv !== 'production',
   entities: [Usuario, Lead],
-
+  ssl:{
+    rejectUnauthorized: false
+  }
 });
 
 export default AppDataSource;
