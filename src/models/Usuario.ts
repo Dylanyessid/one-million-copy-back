@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeor
 
 @Entity("usuarios")
 export class Usuario {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid",)
   id!: string;
 
   @Column({ type: "varchar", length: 100 })
@@ -14,6 +14,6 @@ export class Usuario {
   @Column({ type: "varchar", length: 255 })
   hash: string;
 
-  @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-  created_at: Date;
+  @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP", name: "created_at" })
+  createdAt: Date;
 }

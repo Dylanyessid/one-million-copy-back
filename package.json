@@ -20,7 +20,8 @@
     "openai": "^6.38.0",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.14",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@types/dotenv": "^4.0.3",

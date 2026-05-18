@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { envs } from '../envs';
 import { Usuario } from '../../models/Usuario';
+import { Lead } from '../../models/Lead';
 
 
  const AppDataSource = new DataSource({
@@ -11,7 +12,7 @@ import { Usuario } from '../../models/Usuario';
   password: envs.db.password,
   database: envs.db.database,
   logging: envs.nodeEnv !== 'production',
-  entities: [Usuario],
+  entities: [Usuario, Lead],
 
 });
 
