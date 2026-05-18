@@ -1,13 +1,16 @@
 import { Router } from "express";
-import { createLead, getLeads, getLeadById, getLeadStats, updateLead, deleteLead } from "../modules/leads/leads.controller";
+import { createLead, getLeads, getLeadById, getLeadStats, getRecommendations, updateLead, deleteLead } from "../modules/leads/leads.controller";
 import { validationMiddleware } from "../core/middlewares/validation.middleware";
 import { CreateLeadDto } from "../modules/leads/dto/create.dto";
 import { GetLeadsDto } from "../modules/leads/dto/get-leads.dto";
 import { UpdateLeadDto } from "../modules/leads/dto/update-lead.dto";
+import { GetRecommendationsDto } from "../modules/leads/dto/get-recommendations.dto";
 
 const router = Router();
 
 router.get('/stats', getLeadStats);
+
+router.get('/recommendations', validationMiddleware(GetRecommendationsDto, 'query'), getRecommendations);
 
 router.get('/', validationMiddleware(GetLeadsDto, 'query'), getLeads);
 

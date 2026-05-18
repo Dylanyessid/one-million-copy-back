@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { Result, ok, err } from '../../core/utils/result';
 import { generateUuidV7 } from '../../core/utils/uuid';
 import { Lead, FuenteLead } from '../../models/Lead';
-import { LessThan, MoreThanOrEqual, ILike } from 'typeorm';
+import { openaiLib } from '../../libs/openai';
 
 export interface CreateLeadData {
   id: string;
@@ -244,5 +244,82 @@ async deleteLead(id: string): Promise<Result<Lead, string>> {
       promedioPresupuesto: presupuestoResult.promedio ? parseFloat(parseFloat(presupuestoResult.promedio).toFixed(2)) : null,
       ultimos7Dias: parseInt(ultimos7DiasResult.total),
     });
+  },
+
+  async findByFilters(params: {
+    fuente?: string;
+    fechaDesde?: string;
+    fechaHasta?: string;
+  }): Promise<Result<Lead[], string>> {
+    const leadRepository = AppDataSource.getRepository(Lead);
+
+    const queryBuilder = leadRepository.createQueryBuilder('lead')
+      .where('lead.deletedAt IS NULL')
+      .orderBy('lead.createdAt', 'DESC');
+
+    if (params.fuente) {
+      const fuenteLower = params.fuente.toLowerCase();
+      const fuenteValues = Object.values(FuenteLead).map(v => v.toLowerCase());
+      const fuenteMatch = fuenteValues.find(v => v === fuenteLower);
+      if (fuenteMatch) {
+        queryBuilder.andWhere('LOWER(lead.fuente) = :fuente', { fuente: fuenteLower });
+      }
+    }
+
+    if (params.fechaDesde) {
+      queryBuilder.andWhere('lead.createdAt >= :fechaDesde', {
+        fechaDesde: DateTime.fromISO(params.fechaDesde).toUTC().toJSDate(),
+      });
+    }
+
+    if (params.fechaHasta) {
+      queryBuilder.andWhere('lead.createdAt <= :fechaHasta', {
+        fechaHasta: DateTime.fromISO(params.fechaHasta).toUTC().toJSDate(),
+      });
+    }
+
+    const leads = await queryBuilder.getMany();
+
+    return ok(leads);
+  },
+
+  async getRecommendations(params: {
+    fuente?: string;
+    fechaDesde?: string;
+    fechaHasta?: string;
+  }): Promise<Result<string, string>> {
+    const leadsResult = await this.findByFilters(params);
+
+    if (!leadsResult.ok) {
+      return err(leadsResult.error);
+    }
+
+    const leads = leadsResult.value;
+
+    if (leads.length === 0) {
+      return err('NO_LEADS_FOUND');
+    }
+
+    const leadsSummary = leads.map(l =>
+      `- Nombre: ${l.nombre}, Email: ${l.email}, Fuente: ${l.fuente}, Producto: ${l.productoInteres || 'N/A'}, Presupuesto: ${l.presupuesto || 'N/A'}`
+    ).join('\n');
+
+    const prompt = `
+Eres un asistente de ventas experto. Analiza los siguientes leads y proporciona recomendaciones actionable para mejorar la conversión:
+
+${leadsSummary}
+
+Basándote en este análisis, proporciona:
+1. Un Resumen ejecutivo
+2. La fuente principal de los leads
+2. Recomendaciones concretas para mejorar las tasas de conversión y pasos sugeridos
+
+`;
+
+    const systemMessage = 'Eres un experto en análisis de leads y optimización de ventas. Responde siempre en español.';
+
+    const response = await openaiLib.createCompletion(prompt, systemMessage);
+
+    return ok(response);
   },
 };

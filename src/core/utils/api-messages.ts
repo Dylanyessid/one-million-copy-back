@@ -12,6 +12,7 @@ export enum ErrorCodes {
   LEAD_ID_COLLISION = 'LEAD_ID_COLLISION',
   INVALID_UUID = 'INVALID_UUID',
   LEAD_NOT_FOUND = 'LEAD_NOT_FOUND',
+  NO_LEADS_FOUND = 'NO_LEADS_FOUND',
 }
 
 export enum SuccessCodes {
@@ -22,6 +23,7 @@ export enum SuccessCodes {
   LEAD_DELETED = 'LEAD_DELETED',
   LEAD_FETCHED = 'LEAD_FETCHED',
   LEAD_STATS_FETCHED = 'LEAD_STATS_FETCHED',
+  LEAD_RECOMMENDATIONS_FETCHED = 'LEAD_RECOMMENDATIONS_FETCHED',
 }
 
 
@@ -36,6 +38,7 @@ export const errorMessages: Record<string, { message: string; httpCode: number }
   [ErrorCodes.LEAD_ID_COLLISION]: { message: 'Error al generar ID', httpCode: 500 },
   [ErrorCodes.INVALID_UUID]: { message: 'ID inválido', httpCode: 400 },
   [ErrorCodes.LEAD_NOT_FOUND]: { message: 'Lead no encontrado', httpCode: 404 },
+  [ErrorCodes.NO_LEADS_FOUND]: { message: 'No se encontraron leads con los filtros proporcionados', httpCode: 400 },
 } as const;
 
 export const successMessages: Record<string, { message: string; httpCode: number }> = {
@@ -46,6 +49,7 @@ export const successMessages: Record<string, { message: string; httpCode: number
   [SuccessCodes.LEAD_DELETED]: { message: 'Lead eliminado exitosamente', httpCode: 200 },
   [SuccessCodes.LEAD_FETCHED]: { message: 'Lead obtenido exitosamente', httpCode: 200 },
   [SuccessCodes.LEAD_STATS_FETCHED]: { message: 'Estadísticas obtenidas exitosamente', httpCode: 200 },
+  [SuccessCodes.LEAD_RECOMMENDATIONS_FETCHED]: { message: 'Recomendaciones obtenidas exitosamente', httpCode: 200 },
 } as const;
 
 export type ErrorCode = keyof typeof errorMessages;
